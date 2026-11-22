@@ -1,0 +1,87 @@
+<div class="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
+  <header>
+    <p class="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-600">Overview</p>
+    <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Inventory dashboard</h1>
+    <p class="mt-2 text-sm text-slate-500">A quick look at stock, inventory value, and open orders.</p>
+  </header>
+
+  <div *ngIf="!isLoading" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+      <p class="text-sm font-medium text-slate-500">Total products</p>
+      <p class="mt-3 text-3xl font-bold text-slate-900">{{ totalProducts }}</p>
+      <p class="mt-1 text-xs text-slate-400">Active inventory items</p>
+    </article>
+    <article class="rounded-2xl border border-emerald-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+      <p class="text-sm font-medium text-slate-500">Inventory value</p>
+      <p class="mt-3 text-3xl font-bold text-emerald-700">{{ totalValue | currency }}</p>
+      <p class="mt-1 text-xs text-slate-400">Based on current quantities</p>
+    </article>
+    <article class="rounded-2xl border border-amber-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+      <p class="text-sm font-medium text-slate-500">Low stock items</p>
+      <p class="mt-3 text-3xl font-bold text-amber-600">{{ lowStockItems }}</p>
+      <p class="mt-1 text-xs text-slate-400">At or below reorder level</p>
+    </article>
+    <article class="rounded-2xl border border-indigo-100 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+      <p class="text-sm font-medium text-slate-500">Pending orders</p>
+      <p class="mt-3 text-3xl font-bold text-indigo-700">{{ pendingOrders }}</p>
+      <p class="mt-1 text-xs text-slate-400">Awaiting delivery</p>
+    </article>
+  </div>
+
+  <div class="grid gap-6 xl:grid-cols-2">
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <div class="mb-5 flex items-center justify-between gap-3">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-amber-600">Needs attention</p>
+          <h2 class="mt-1 text-lg font-semibold text-slate-900">Low stock products</h2>
+        </div>
+        <a href="/products" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800">View all <span aria-hidden="true">→</span></a>
+      </div>
+      <div *ngIf="getLowStockProducts().length > 0" class="space-y-3">
+        <div *ngFor="let product of getLowStockProducts()" class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-100 bg-amber-50/60 p-4">
+          <div>
+            <p class="font-semibold text-slate-800">{{ product.name }}</p>
+            <p class="mt-1 text-xs text-slate-500">Qty: {{ product.quantity }} <span class="mx-1">·</span> Reorder at: {{ product.reorderLevel }}</p>
+          </div>
+          <a [href]="'/products/' + product.id" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800">Details</a>
+        </div>
+      </div>
+      <div *ngIf="getLowStockProducts().length === 0" class="rounded-xl bg-emerald-50 p-5 text-center text-sm font-medium text-emerald-700">
+        All products have sufficient stock.
+      </div>
+    </section>
+
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+      <div class="mb-5 flex items-center justify-between gap-3">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wider text-indigo-600">Latest activity</p>
+          <h2 class="mt-1 text-lg font-semibold text-slate-900">Recent orders</h2>
+        </div>
+        <a href="/orders" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800">View all <span aria-hidden="true">→</span></a>
+      </div>
+      <div *ngIf="orders.length > 0" class="space-y-3">
+        <div *ngFor="let order of orders.slice(0, 5)" class="rounded-xl border border-slate-100 p-4 transition hover:border-indigo-100 hover:bg-slate-50">
+          <div class="flex items-center justify-between">
+            <span class="font-semibold text-slate-800">Order #{{ order.id }}</span>
+            <span [ngClass]="order.status === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-emerald-100 text-emerald-700'" class="rounded-full px-2.5 py-1 text-xs font-semibold">{{ order.status | uppercase }}</span>
+          </div>
+          <p class="mt-2 text-sm text-slate-500">Product #{{ order.productId }} <span class="mx-1">·</span> Qty {{ order.quantity }}</p>
+          <p class="mt-1 text-xs text-slate-400">{{ order.supplier }}</p>
+        </div>
+      </div>
+      <div *ngIf="orders.length === 0" class="rounded-xl bg-slate-50 p-5 text-center text-sm text-slate-500">No orders yet.</div>
+    </section>
+  </div>
+
+  <section class="rounded-2xl bg-slate-900 p-6 text-white shadow-sm sm:p-8">
+    <div class="mb-5">
+      <p class="text-xs font-semibold uppercase tracking-wider text-indigo-300">Shortcuts</p>
+      <h2 class="mt-1 text-xl font-semibold">Quick actions</h2>
+    </div>
+    <div class="grid gap-3 sm:grid-cols-3">
+      <a href="/products" class="rounded-xl bg-white/10 p-4 font-semibold transition hover:bg-white/20">📦 <span class="ml-2">View products</span></a>
+      <a href="/suppliers" class="rounded-xl bg-white/10 p-4 font-semibold transition hover:bg-white/20">🏭 <span class="ml-2">Manage suppliers</span></a>
+      <a href="/orders" class="rounded-xl bg-white/10 p-4 font-semibold transition hover:bg-white/20">📋 <span class="ml-2">Track orders</span></a>
+    </div>
+  </section>
+</div>

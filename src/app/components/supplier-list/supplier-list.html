@@ -1,0 +1,76 @@
+<div class="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
+  <header class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <p class="text-sm font-semibold uppercase tracking-[0.18em] text-indigo-600">Partners</p>
+      <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900">Suppliers</h1>
+      <p class="mt-1 text-sm text-slate-500">Manage supplier contacts and delivery information.</p>
+    </div>
+    <button (click)="toggleForm()" class="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+      {{ showForm ? 'Cancel' : '+ Add new supplier' }}
+    </button>
+  </header>
+
+  <section *ngIf="showForm" class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+    <h2 class="mb-5 text-lg font-semibold text-slate-900">{{ editingId ? 'Edit supplier' : 'Add new supplier' }}</h2>
+    <form (ngSubmit)="addOrUpdateSupplier()" class="grid gap-5 md:grid-cols-2">
+      <div>
+        <label for="name" class="mb-1.5 block text-sm font-medium text-slate-700">Supplier name <span class="text-rose-500">*</span></label>
+        <input type="text" id="name" [(ngModel)]="newSupplier.name" name="name" placeholder="Enter supplier name" required class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" />
+      </div>
+      <div>
+        <label for="email" class="mb-1.5 block text-sm font-medium text-slate-700">Email <span class="text-rose-500">*</span></label>
+        <input type="email" id="email" [(ngModel)]="newSupplier.email" name="email" placeholder="Enter email address" required class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" />
+      </div>
+      <div>
+        <label for="phone" class="mb-1.5 block text-sm font-medium text-slate-700">Phone</label>
+        <input type="text" id="phone" [(ngModel)]="newSupplier.phone" name="phone" placeholder="Enter phone number" class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10" />
+      </div>
+      <div>
+        <label for="address" class="mb-1.5 block text-sm font-medium text-slate-700">Address</label>
+        <textarea id="address" [(ngModel)]="newSupplier.address" name="address" placeholder="Enter address" rows="3" class="w-full resize-y rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"></textarea>
+      </div>
+      <div class="flex flex-wrap gap-3 md:col-span-2">
+        <button type="submit" class="rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700">{{ editingId ? 'Update supplier' : 'Add supplier' }}</button>
+        <button type="button" (click)="toggleForm()" class="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Cancel</button>
+      </div>
+    </form>
+  </section>
+
+  <div *ngIf="isLoading" class="rounded-2xl border border-slate-200 bg-white p-10 text-center text-sm text-slate-500 shadow-sm">Loading suppliers…</div>
+  <div *ngIf="errorMessage" class="rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700" role="alert">{{ errorMessage }}</div>
+
+  <section *ngIf="!isLoading && suppliers.length > 0" class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div class="overflow-x-auto">
+      <table class="w-full min-w-[720px] border-collapse text-left text-sm">
+        <thead class="bg-slate-50 text-xs uppercase tracking-wider text-slate-500">
+          <tr>
+            <th class="px-5 py-4 font-semibold">Supplier</th>
+            <th class="px-5 py-4 font-semibold">Email</th>
+            <th class="px-5 py-4 font-semibold">Phone</th>
+            <th class="px-5 py-4 font-semibold">Address</th>
+            <th class="px-5 py-4 font-semibold">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <tr *ngFor="let supplier of suppliers" class="transition hover:bg-slate-50">
+            <td class="px-5 py-4 font-semibold text-slate-900">{{ supplier.name }}</td>
+            <td class="px-5 py-4"><a [href]="'mailto:' + supplier.email" class="font-medium text-indigo-600 hover:text-indigo-800">{{ supplier.email }}</a></td>
+            <td class="px-5 py-4 text-slate-600">
+              <a *ngIf="supplier.phone" [href]="'tel:' + supplier.phone" class="hover:text-indigo-700">{{ supplier.phone }}</a>
+              <span *ngIf="!supplier.phone" class="text-slate-400">—</span>
+            </td>
+            <td class="max-w-xs truncate px-5 py-4 text-slate-500">{{ supplier.address || '—' }}</td>
+            <td class="whitespace-nowrap px-5 py-4">
+              <button (click)="editSupplier(supplier)" class="mr-2 rounded-lg bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100" title="Edit supplier">Edit</button>
+              <button (click)="deleteSupplier(supplier.id)" class="rounded-lg bg-rose-50 px-3 py-2 text-xs font-semibold text-rose-700 transition hover:bg-rose-100" title="Delete supplier">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div *ngIf="!isLoading && suppliers.length === 0 && !errorMessage" class="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center text-sm text-slate-500">
+    No suppliers found. Add a supplier to get started.
+  </div>
+</div>

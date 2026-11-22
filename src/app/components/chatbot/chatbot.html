@@ -1,0 +1,64 @@
+<div class="fixed bottom-5 right-5 z-[1000] font-sans sm:bottom-6 sm:right-6">
+  <button
+    type="button"
+    [attr.aria-expanded]="isOpen()"
+    aria-label="Toggle inventory assistant"
+    (click)="toggleChat()"
+    class="flex min-h-13 items-center justify-center gap-2 rounded-full bg-indigo-600 px-5 text-sm font-semibold text-white shadow-xl shadow-indigo-950/20 transition hover:-translate-y-0.5 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300"
+  >
+    <span aria-hidden="true" class="text-xl">{{ isOpen() ? '×' : '✦' }}</span>
+    @if (!isOpen()) {
+      <span>Ask inventory</span>
+    }
+  </button>
+
+  @if (isOpen()) {
+    <section class="absolute bottom-16 right-0 flex h-[75vh] max-h-[34rem] min-h-[22rem] w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl shadow-slate-900/20 sm:w-96" aria-label="Inventory assistant">
+      <header class="flex items-center justify-between bg-slate-900 px-5 py-4 text-white">
+        <div>
+          <p class="mb-1 text-[10px] font-bold tracking-[0.18em] text-indigo-300">INVENTORY ASSISTANT</p>
+          <h2 class="text-lg font-semibold">How can I help?</h2>
+        </div>
+        <button class="rounded-lg px-2 py-1 text-2xl leading-none text-slate-300 transition hover:bg-white/10 hover:text-white" type="button" aria-label="Close chat" (click)="toggleChat()">×</button>
+      </header>
+
+      <div #messageList class="flex flex-1 flex-col gap-3 overflow-y-auto p-4" aria-live="polite">
+        @for (message of messages(); track $index) {
+          <div class="flex" [class.justify-end]="message.role === 'user'">
+            <div [ngClass]="message.role === 'user' ? 'max-w-[88%] whitespace-pre-wrap break-words rounded-2xl rounded-br-sm bg-indigo-600 px-3.5 py-2.5 text-sm leading-relaxed text-white' : 'max-w-[88%] whitespace-pre-wrap break-words rounded-2xl rounded-bl-sm bg-slate-100 px-3.5 py-2.5 text-sm leading-relaxed text-slate-800'">
+              {{ message.content }}
+            </div>
+          </div>
+        }
+        @if (isLoading()) {
+          <div class="flex">
+            <div class="rounded-2xl rounded-bl-sm bg-slate-100 px-3.5 py-2.5 text-sm text-slate-500" aria-label="Assistant is thinking">Thinking…</div>
+          </div>
+        }
+      </div>
+
+      @if (error()) {
+        <p class="px-4 pb-2 text-xs leading-relaxed text-rose-700" role="alert">{{ error() }}</p>
+      }
+
+      <form class="flex gap-2 border-t border-slate-100 p-3" (ngSubmit)="sendMessage()">
+        <label class="sr-only" for="chat-message">Message the inventory assistant</label>
+        <input
+          id="chat-message"
+          name="message"
+          type="text"
+          [ngModel]="draft()"
+          (ngModelChange)="draft.set($event)"
+          placeholder="Ask about your inventory…"
+          autocomplete="off"
+          [disabled]="isLoading()"
+          class="min-w-0 flex-1 rounded-xl border border-slate-300 px-3 py-2.5 text-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 disabled:bg-slate-50"
+        />
+        <button type="submit" [disabled]="isLoading() || !draft().trim()" aria-label="Send message" class="rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50">
+          Send
+        </button>
+      </form>
+      <p class="px-3 pb-3 text-center text-[11px] text-slate-400">Answers use the latest data from your inventory.</p>
+    </section>
+  }
+</div>
