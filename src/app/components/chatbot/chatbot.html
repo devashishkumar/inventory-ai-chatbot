@@ -49,6 +49,7 @@
           type="text"
           [ngModel]="draft()"
           (ngModelChange)="draft.set($event)"
+          maxlength="2000"
           placeholder="Ask about your inventory…"
           autocomplete="off"
           [disabled]="isLoading()"

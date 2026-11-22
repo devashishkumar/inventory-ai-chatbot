@@ -38,7 +38,7 @@ export class ChatbotComponent {
       return;
     }
 
-    const conversation = this.messages().slice(1);
+    const conversation = this.messages().slice(1).slice(-12);
     this.messages.update((messages) => [...messages, { role: 'user', content }]);
     this.draft.set('');
     this.error.set('');
