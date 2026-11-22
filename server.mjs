@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import express from 'express';
-import { ChatMistralAI } from '@langchain/mistralai';
+import { ChatOpenAI } from '@langchain/openai';
 import { AIMessage, HumanMessage } from '@langchain/core/messages';
 import { ChatPromptTemplate, MessagesPlaceholder } from '@langchain/core/prompts';
 
@@ -81,8 +81,8 @@ app.post('/api/chat', async (request, response) => {
     return;
   }
 
-  if (!process.env.MISTRAL_API_KEY) {
-    response.status(503).json({ error: 'Chat is not configured. Set MISTRAL_API_KEY on the API server.' });
+  if (!process.env.OPENROUTER_API_KEY) {
+    response.status(503).json({ error: 'Chat is not configured. Set OPENROUTER_API_KEY on the API server.' });
     return;
   }
 
@@ -91,10 +91,13 @@ app.post('/api/chat', async (request, response) => {
     const chatHistory = history.map((turn) =>
       turn.role === 'user' ? new HumanMessage(turn.content) : new AIMessage(turn.content),
     );
-    const model = new ChatMistralAI({
-      apiKey: process.env.MISTRAL_API_KEY,
-      model: process.env.MISTRAL_MODEL ?? 'mistral-small-latest',
+    const model = new ChatOpenAI({
+      apiKey: process.env.OPENROUTER_API_KEY,
+      model: process.env.OPENROUTER_MODEL ?? 'nvidia/nemotron-3-ultra-550b-a55b:free',
       temperature: 0.2,
+      configuration: {
+        baseURL: 'https://openrouter.ai/api/v1',
+      },
     });
     const chain = prompt.pipe(model);
     const result = await chain.invoke({
