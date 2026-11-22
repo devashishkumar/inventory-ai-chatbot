@@ -78,3 +78,8 @@ src/app/models/       Product, supplier, and order models
 server.mjs            LangChain and OpenRouter chatbot API
 db.json               Mock inventory data for JSON Server
 ```
+
+## Chatbot
+
+![Chatbot](public/chatbot.png)
+![Chatbot](public/chatbot2.png)

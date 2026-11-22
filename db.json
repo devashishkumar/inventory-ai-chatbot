@@ -49,38 +49,38 @@
   "suppliers": [
     {
       "id": 1,
-      "name": "TechSupply Inc",
-      "email": "contact@techsupply.com",
-      "phone": "+1-555-0101",
-      "address": "123 Tech Street, Silicon Valley, CA"
+      "name": "TechSupply India Pvt Ltd",
+      "email": "contact@techsupply.in",
+      "phone": "+91-98765-00001",
+      "address": "Electronic City, Noida, Uttar Pradesh"
     },
     {
       "id": 2,
-      "name": "Peripherals Ltd",
-      "email": "info@peripherals.com",
-      "phone": "+1-555-0102",
-      "address": "456 Device Lane, Austin, TX"
+      "name": "Peripherals Solutions Pvt Ltd",
+      "email": "info@peripherals.in",
+      "phone": "+91-98765-00002",
+      "address": "Bellandur, Bengaluru, Karnataka"
     },
     {
       "id": 3,
-      "name": "Cable World",
-      "email": "sales@cableworld.com",
-      "phone": "+1-555-0103",
-      "address": "789 Wire Road, Denver, CO"
+      "name": "Cable World India",
+      "email": "sales@cableworld.in",
+      "phone": "+91-98765-00003",
+      "address": "Grant Road East, Mumbai, Maharashtra"
     },
     {
       "id": 4,
-      "name": "Gaming Gear Co",
-      "email": "support@gaminggear.com",
-      "phone": "+1-555-0104",
-      "address": "321 Game Plaza, Los Angeles, CA"
+      "name": "Gaming Gear Enterprises",
+      "email": "support@gaminggear.in",
+      "phone": "+91-98765-00004",
+      "address": "Nehru Place Market, Delhi"
     },
     {
       "id": 5,
-      "name": "Display Tech",
-      "email": "contact@displaytech.com",
-      "phone": "+1-555-0105",
-      "address": "654 Screen Drive, New York, NY"
+      "name": "Display Tech Systems",
+      "email": "contact@displaytech.in",
+      "phone": "+91-98765-00005",
+      "address": "Madhapur, Hyderabad, Telangana"
     }
   ],
   "orders": [
